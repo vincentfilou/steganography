@@ -52,7 +52,7 @@ def encode(image,string):
         raise Exception("Image too small")
     for row in range(0,width):
         r,g,b = image.getpixel((row,0))
-        image.putpixel((0,row), (r,g,encodeBit(b,int(encoded_size[row]))))
+        image.putpixel((row,0), (r,g,encodeBit(b,int(encoded_size[row]))))
     line = 1
     row = 0
     bitIndex = 0
@@ -70,18 +70,19 @@ def decode(image):
     (width,height) = image.size
     size = 0
     for row in range(0,width):
-        r,g,b = image.getpixel((0,row))
+        r,g,b = image.getpixel((row,0))
         size = (size<<1)|(b&0x1)
+    print(size)
     bitIndex = 0
     while bitIndex < size:
         line = 1+ int(bitIndex/width)
         row = bitIndex % width
-        (r,g,b) = image.getpixel((line,row))
+        (r,g,b) = image.getpixel((row,line))
         bits.append(b&0x1)
         bitIndex += 1
     return bitArrayToString(bits)
 
 img = Image.open("rarebeat.jpg")
 encode(img,"rabbit\tegg\nspam100").save("rarebeat.png")
-img2 = Image.open("rarebeat_2.png")
+img2 = Image.open("rarebeat.png")
 print(decode(img2))
